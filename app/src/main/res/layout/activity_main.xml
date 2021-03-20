@@ -3,16 +3,24 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
+  android:padding="16dp"
   android:layout_height="match_parent"
   tools:context=".MainActivity">
 
-  <TextView
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-	android:text="Hello World!"
+  <EditText
+	android:layout_width="match_parent"
+	app:layout_constraintTop_toTopOf="parent"
+	android:hint="Color Count"
+	android:layout_marginBottom="10dp"
+	app:layout_constraintBottom_toTopOf="@id/indicator_view"
+	android:id="@+id/color_count"
+	android:layout_height="wrap_content"/>
+
+  <dev.olaore.animationscustomviews.views.IndicatorView
+	android:layout_width="match_parent"
+	android:id="@+id/indicator_view"
+	app:layout_constraintTop_toBottomOf="@id/color_count"
 	app:layout_constraintBottom_toBottomOf="parent"
-	app:layout_constraintLeft_toLeftOf="parent"
-	app:layout_constraintRight_toRightOf="parent"
-	app:layout_constraintTop_toTopOf="parent" />
+	android:layout_height="0dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
