@@ -44,6 +44,11 @@ class IndicatorView @JvmOverloads
             }
         }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        rect.set(0f, 0f, w.toFloat(), h.toFloat())
+    }
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         arcs.forEach { arc ->
