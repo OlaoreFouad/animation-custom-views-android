@@ -1,9 +1,11 @@
 package dev.olaore.animationscustomviews.views
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.LinearInterpolator
 import androidx.core.content.ContextCompat
 import dev.olaore.animationscustomviews.R
 import dev.olaore.animationscustomviews.models.Arc
@@ -18,8 +20,10 @@ class IndicatorView @JvmOverloads
     )
     : View( ctx, attributeSet, defStyleAttr, defStyleRes ) {
 
+    private var currentSweepAngle = 0
     private val START_ANGLE = 225f
     private val rect = RectF(0f, 0f, 0f, 0f)
+    private var animator: ValueAnimator? = null
 
     private var arcs = emptyList<Arc>()
     private var colorMap = mapOf(
@@ -36,7 +40,7 @@ class IndicatorView @JvmOverloads
         this.color = ContextCompat.getColor(ctx, R.color.color_1)
     }
 
-    private var colors: List<Colors> = emptyList()
+    var colors: List<Colors> = emptyList()
         set(value) {
             if (field != value || arcs.isEmpty()) {
                 field = value
@@ -52,14 +56,23 @@ class IndicatorView @JvmOverloads
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         arcs.forEach { arc ->
-            paint.color = arc.color
-            canvas?.drawArc(
-                    rect,
-                    START_ANGLE + arc.start,
-                    arc.sweep,
-                    true,
-                    paint
-            )
+            if (currentSweepAngle > arc.start + arc.sweep) {
+                paint.color = arc.color
+                canvas?.drawArc(rect,
+                        START_ANGLE + arc.start,
+                        arc.sweep,
+                        true,
+                        paint)
+            } else {
+                if (currentSweepAngle > arc.start) {
+                    paint.color = arc.color
+                    canvas?.drawArc(rect,
+                            START_ANGLE + arc.start,
+                            currentSweepAngle - arc.start,
+                            true,
+                            paint)
+                }
+            }
         }
     }
 
@@ -73,6 +86,22 @@ class IndicatorView @JvmOverloads
                 Arc(startAngle, sweepAngle, colorMap.getValue(color))
             }
         }
+        startAnimation()
+    }
+
+    private fun startAnimation() {
+
+        animator?.cancel()
+        animator = ValueAnimator.ofInt(0, 360).apply {
+            duration = 10000
+            interpolator = LinearInterpolator()
+            addUpdateListener {
+                currentSweepAngle = it.animatedValue as Int
+                invalidate()
+            }
+        }
+        animator?.start()
+
     }
 
 }
